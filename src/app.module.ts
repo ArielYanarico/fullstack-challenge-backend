@@ -3,10 +3,13 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { join } from 'path';
 import { ConfigModule } from '@nestjs/config';
+import { ScheduleModule } from '@nestjs/schedule';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { validationSchema } from './config/env.validation.schema'
+import { VehicleIngesterModule } from './vehicle-ingester/vehicle-ingester.module';
+import { MakesModule } from './makes/makes.module';
 
 @Module({
   imports: [
@@ -20,6 +23,9 @@ import { validationSchema } from './config/env.validation.schema'
       validationSchema,
       cache: true,
     }),
+    ScheduleModule.forRoot(),
+    VehicleIngesterModule,
+    MakesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

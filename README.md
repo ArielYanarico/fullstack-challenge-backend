@@ -32,9 +32,9 @@ gitGraph
 
 * [*] Initialize the project using NestJS
 * [*] Set-up the config module (add ZOD for validation)
-* [ ] Add and set-up nestJs scheduling to get vehicles every period of time
+* [*] Add and set-up nestJs scheduling to get vehicles every period of time
 * [ ] Add the logging module
-* [ ] Design and make the first version the ingester
+* [*] Design and make the first version the ingester
 * [ ] Start with the technique for error handling
 * [ ] Design and make the models for Mongo DB
 * [ ] Setup Unit test library
@@ -53,3 +53,5 @@ gitGraph
   * ***Justification .-*** It is no a bad idea keeping handy Zod API.
 * [Mermaid.js](https://mermaid.js.org/intro/)
   * ***Justification .-*** It is my first time using mermaid for documentation diagrams, so I am following its syntax page.
+* [Bug - Query root type must be provided](https://stackoverflow.com/questions/64105940/graphqlerror-query-root-type-must-be-provided)
+  * ***Justification .-*** I got this error because I created the ingester first without having at least one @Query() function.
