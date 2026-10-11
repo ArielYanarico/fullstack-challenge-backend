@@ -32,7 +32,7 @@ gitGraph
 
 * [*] Initialize the project using NestJS
 * [*] Set-up the config module (add ZOD for validation)
-* [ ] Add and set-up nest schedule to get vehicles every time period
+* [ ] Add and set-up nestJs scheduling to get vehicles every period of time
 * [ ] Add the logging module
 * [ ] Design and make the first version the ingester
 * [ ] Start with the technique for error handling
@@ -47,6 +47,8 @@ gitGraph
   * ***Justification .-*** It is a long time I did not start a project in nest JS with graphQL, it is a good idea to follow the offical and newest way to do it.
 * [NestJS - Configuration](https://docs.nestjs.com/application/configuration)
   * ***Justification .-*** Using the offcial docuemntation for config hadling is the best option in my mind.
+* [NestJS - Task Scheduling](https://docs.nestjs.com/application/configuration)
+  * ***Justification .-*** Using the offcial docuemntation for scheduling task using cron.
 * [Zod API](https://zod.dev/api)
   * ***Justification .-*** It is no a bad idea keeping handy Zod API.
 * [Mermaid.js](https://mermaid.js.org/intro/)
