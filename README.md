@@ -33,9 +33,11 @@ gitGraph
 * [*] Initialize the project using NestJS
 * [*] Set-up the config module (add ZOD for validation)
 * [*] Add and set-up nestJs scheduling to get vehicles every period of time
-* [ ] Add the logging module
+* [ ] Set up the logging module
 * [*] Design and make the first version the ingester
-* [ ] Start with the technique for error handling
+  * [*] Fetch vehicle type
+  * [ ] Fetch all makes
+* [ ] Start with the approach for error handling
 * [ ] Design and make the models for Mongo DB
 * [ ] Setup Unit test library
 * [ ] Add test for Ingester
