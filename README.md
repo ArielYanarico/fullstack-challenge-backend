@@ -24,7 +24,7 @@ gitGraph
 
 ## Tasks (TODO):
 
-* [ ] Initialize the project using NestJS
+* [*] Initialize the project using NestJS
 * [ ] Set-up the config module
 * [ ] Design and make the first version the providers
 * [ ] Add the logging module
