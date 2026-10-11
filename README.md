@@ -5,7 +5,7 @@ This is the backend for fullstack techincal challenge
 
 * **NODE_ENV** - *enum* - ['development', 'production', 'test'] Define the app environment. (default 'development')
 * **PORT** - *int* - Port number exposed where backend runs. (default 3000)
-* **PROVIDER_VEHICLES_URL** - *string* - URL consumed by Vehicles provider to get makes and types.(required)
+* **PROVIDER_VEHICLES_URL** - *string* - URL consumed by Vehicles ingester to get "makes" and "vehicle types".(required)
 
 ## Branching model justification
 
@@ -32,12 +32,13 @@ gitGraph
 
 * [*] Initialize the project using NestJS
 * [*] Set-up the config module (add ZOD for validation)
-* [ ] Design and make the first version the providers
+* [ ] Add and set-up nest schedule to get vehicles every time period
 * [ ] Add the logging module
+* [ ] Design and make the first version the ingester
 * [ ] Start with the technique for error handling
 * [ ] Design and make the models for Mongo DB
 * [ ] Setup Unit test library
-* [ ] Add test for Providers
+* [ ] Add test for Ingester
 * [ ] Work on the service and resolver file
 
 ## Bibliography
