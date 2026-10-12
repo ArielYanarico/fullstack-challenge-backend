@@ -7,7 +7,10 @@ import { MakeFromXML, MakeResponseFromXML, MakeType } from './types/make.type';
 @Injectable()
 export class VehicleParserService {
   private readonly logger = new Logger(VehicleParserService.name);
-  private readonly xmlParser = new XMLParser();
+  private readonly arrayNodes = new Set(['VehicleTypesForMakeIds', 'AllVehicleMakes']);
+  private readonly xmlParser = new XMLParser({
+    isArray: (tagName: string) => this.arrayNodes.has(tagName),
+  });
 
   parseVehicleType(xmlData: string): VehicleType[] {
     try {
@@ -18,7 +21,7 @@ export class VehicleParserService {
 
       const vehicleTypesMapped = vehicleTypes.map(this.mapVehicleType);
 
-      this.logger.log({ vehicleTypesMapped }, 'Vehicle types parsed successfully!')
+      this.logger.debug(`Vehicle types parsed successfully! count: ${vehicleTypesMapped.length}`)
       return vehicleTypesMapped;
     } catch (error) {
       if (error instanceof XmlParsingException)
@@ -44,7 +47,7 @@ export class VehicleParserService {
 
       const makesMapped = makes.map(this.mapMake);
 
-      this.logger.log({ vehicleTypesMapped: makesMapped }, 'Makes parsed successfully!')
+      this.logger.log(`Makes parsed successfully! count: ${makesMapped.length}`)
       return makesMapped;
     } catch (error) {
       if (error instanceof XmlParsingException)
@@ -54,7 +57,7 @@ export class VehicleParserService {
     }
   }
 
-    private mapMake(data: MakeFromXML): MakeType {
+  private mapMake(data: MakeFromXML): MakeType {
     return {
       makeId: data.Make_ID?.toString() ?? '',
       makeName: data.Make_Name ?? 'Make Unknown',

@@ -19,7 +19,7 @@ export class VehicleFetchService {
         query: { format: 'xml' },
       });
 
-      this.logger.log({ data }, 'Vehicle types fetched Successfully!');
+      this.logger.debug(`Vehicle types fetched Successfully for make id: ${makeId}`);
       return data;
 
     } catch (error) {
@@ -38,7 +38,7 @@ export class VehicleFetchService {
         query: { format: 'xml' },
       });
 
-      this.logger.log({ data }, 'All makes fetched Successfully!');
+      this.logger.log('All makes fetched Successfully!');
       return data;
 
     } catch (error) {

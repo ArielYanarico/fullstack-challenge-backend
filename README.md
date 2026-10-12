@@ -66,7 +66,9 @@ gitGraph
 * [NestJS - Http Client](https://docs.nestjs.com/application/http-client)
   * ***Justification .-*** I have experience using fetch and axios, now I wanted to experiment with http client from nestJS.
 * [NestJS - Mongo DB](https://docs.nestjs.com/data/mongodb)
-  * ***Justification .-*** It is a long time I did not start a project in nest JS with graphQL, it is a good idea to follow the offical and newest way to do it.
+  * ***Justification .-*** For integrating mongo DB I used this documentation.
+* [NestJS - Unions and Enums](https://docs.nestjs.com/graphql/unions-and-enums#code-first-1)
+  * ***Justification .-*** I tried to follow this approach to merge vehicle types with makes but didn't work at all.
 * [MDN - Global Object Errors](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error)
   * ***Justification .-*** I needed this documentation to make custom Errors that are not inheritted from HttpException.
 * [Pino Logger](https://getpino.io/#/docs/api?id=logger)
