@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+
 import { Make } from '../vehicle-ingester/schemas/make.schema';
 import { GetMakesArgs } from './dto/get-makes.args';
 
