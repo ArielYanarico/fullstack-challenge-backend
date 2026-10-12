@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Cron } from '@nestjs/schedule';
+import { Cron, CronExpression } from '@nestjs/schedule';
 
 import { VehicleFetchService } from './vehicle-fetch.service';
 
@@ -10,8 +10,9 @@ export class VehicleIngesterService {
     private readonly vehicleFetchService: VehicleFetchService,
   ) {}
 
-  @Cron('5 * * * * *')
+  @Cron(CronExpression.EVERY_10_SECONDS)
   ingestVehicleMakes() {
-    this.vehicleFetchService.getAllVehicleTypes('440')
+    this.vehicleFetchService.getVehicleTypesForMakeId('440');
+    this.vehicleFetchService.getAllMakes();
   }
 }

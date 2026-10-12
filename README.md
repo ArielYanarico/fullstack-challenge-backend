@@ -36,12 +36,16 @@ gitGraph
 * [ ] Set up the logging module
 * [*] Design and make the first version the ingester
   * [*] Fetch vehicle type
-  * [ ] Fetch all makes
-* [ ] Start with the approach for error handling
+  * [*] Fetch all makes
+* [*] Start with the approach for error handling
 * [ ] Design and make the models for Mongo DB
 * [ ] Setup Unit test library
 * [ ] Add test for Ingester
 * [ ] Work on the service and resolver file
+* [ ] Add/update Exception filters (if needed)
+
+### Nice to have tasks:
+* [ ] Add a retry capability to cron jobs when the fail.
 
 ## Bibliography
 
@@ -51,6 +55,10 @@ gitGraph
   * ***Justification .-*** Using the offcial docuemntation for config hadling is the best option in my mind.
 * [NestJS - Task Scheduling](https://docs.nestjs.com/application/configuration)
   * ***Justification .-*** Using the offcial docuemntation for scheduling task using cron.
+* [NestJS - Http Client](https://docs.nestjs.com/application/http-client)
+  * ***Justification .-*** I have experience using fetch and axios, now I wanted to experiment with http client from nestJS.
+* [MDN - Global Object Errors](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error)
+  * ***Justification .-*** I needed this documentation to make custom Errors that are not inheritted from HttpException.
 * [Zod API](https://zod.dev/api)
   * ***Justification .-*** It is no a bad idea keeping handy Zod API.
 * [Mermaid.js](https://mermaid.js.org/intro/)
