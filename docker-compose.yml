@@ -10,5 +10,16 @@ services:
     volumes:
       - mongo-data:/data/db
 
+  redis:
+    image: redis:7-alpine
+    container_name: challenge-redis
+    restart: unless-stopped
+    command: ["redis-server", "--appendonly", "yes", "--maxmemory-policy", "noeviction"]
+    ports:
+      - "127.0.0.1:6379:6379"
+    volumes:
+      - redis-data:/data
+
 volumes:
   mongo-data:
+  redis-data:

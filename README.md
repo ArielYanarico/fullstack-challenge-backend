@@ -12,6 +12,8 @@ This is the backend for fullstack techincal challenge
 * **PROVIDER_VEHICLES_URL** - *string* - URL consumed by Vehicles ingester to get "makes" and "vehicle types".(required)
 * **LOGGING_LEVEL** - *string* - Minimum logging level used by pino-http. (default 'info')
 * **DB_CONNECTION_URI** - *string* - Mongo connection uri. (default 'mongodb://localhost:27017/challenge-db')
+* **REDIS_HOST** - *string* - Redis host for caching data. (default 'localhost')
+* **REDIS_PORT** - *int* - The port where redis is exposed. (default 6379)
 
 ## Branching model justification
 
