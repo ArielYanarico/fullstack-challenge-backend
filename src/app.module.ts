@@ -10,6 +10,7 @@ import { AppService } from './app.service';
 import { validationSchema } from './config/env.validation.schema'
 import { VehicleIngesterModule } from './vehicle-ingester/vehicle-ingester.module';
 import { MakesModule } from './makes/makes.module';
+import { AppLoggerModule } from './app-logger/app-logger.module';
 
 @Module({
   imports: [
@@ -24,8 +25,10 @@ import { MakesModule } from './makes/makes.module';
       cache: true,
     }),
     ScheduleModule.forRoot(),
+    AppLoggerModule,
     VehicleIngesterModule,
     MakesModule,
+    AppLoggerModule,
   ],
   controllers: [AppController],
   providers: [AppService],

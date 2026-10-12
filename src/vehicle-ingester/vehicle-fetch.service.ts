@@ -6,6 +6,7 @@ import { VehicleApiUnavailableException } from './exceptions/vehicleApiUnavailab
 @Injectable()
 export class VehicleFetchService {
   private readonly logger = new Logger(VehicleFetchService.name);
+
   private readonly typeURL = '/GetVehicleTypesForMakeId/:makeId';
   private readonly makesURL = '/getallmakes';
 
@@ -18,7 +19,7 @@ export class VehicleFetchService {
         query: { format: 'xml' },
       });
 
-      this.logger.log(`Data: ${data}`);
+      this.logger.log({ data }, 'Vehicle types fetched Successfully!');
       return data;
 
     } catch (error) {
@@ -37,11 +38,11 @@ export class VehicleFetchService {
         query: { format: 'xml' },
       });
 
-      this.logger.log(`Data: ${data}`);
+      this.logger.log({ data }, 'All makes fetched Successfully!');
       return data;
 
     } catch (error) {
-        new VehicleApiUnavailableException(this.logger, error as Error)
+      new VehicleApiUnavailableException(this.logger, error as Error)
 
       return;
     }

@@ -17,7 +17,8 @@ import { VehicleParserService } from './vehicle-parser.service';
       }),
     }),
   ],
-  providers: [VehicleIngesterService, VehicleFetchService, VehicleParserService]
+  providers: [VehicleIngesterService, VehicleFetchService, VehicleParserService],
+  exports: [VehicleIngesterService]
 })
 
 export class VehicleIngesterModule {}
