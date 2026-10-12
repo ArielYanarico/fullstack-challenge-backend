@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 
 import { VehicleFetchService } from './vehicle-fetch.service';
+import { VehicleParserService } from './vehicle-parser.service';
 
 @Injectable()
 export class VehicleIngesterService {
@@ -9,21 +10,24 @@ export class VehicleIngesterService {
 
   constructor(
     private readonly vehicleFetchService: VehicleFetchService,
+    private readonly vehicleParseService: VehicleParserService,
   ) {}
 
   async onApplicationBootstrap() {
     this.logger.log('Starting up makes and vehicle types...');
-    this.ingestVehicleMakes();
+    this.ingestVehicleData();
   }
 
   @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)
   async handleCron() {
     this.logger.log('Scheduled ingestion of makes and vehicle types data...');
-    this.ingestVehicleMakes();
+    this.ingestVehicleData();
   }
 
-  private async ingestVehicleMakes() {
-    this.vehicleFetchService.getVehicleTypesForMakeId('440');
-    this.vehicleFetchService.getAllMakes();
+  private async ingestVehicleData() {
+    const vehicleTypesXml = await this.vehicleFetchService.getVehicleTypesForMakeId('440');
+    //this.vehicleFetchService.getAllMakes();
+
+    const vehicleTypes = this.vehicleParseService.parseVehicleType(vehicleTypesXml);
   }
 }

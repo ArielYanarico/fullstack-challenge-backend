@@ -1,11 +1,16 @@
 # fullstack-challenge-backend
 This is the backend for fullstack techincal challenge
 
+## Set up
+
+
+
 ## Environment variables
 
 * **NODE_ENV** - *enum* - ['development', 'production', 'test'] Define the app environment. (default 'development')
 * **PORT** - *int* - Port number exposed where backend runs. (default 3000)
 * **PROVIDER_VEHICLES_URL** - *string* - URL consumed by Vehicles ingester to get "makes" and "vehicle types".(required)
+* **LOGGING_LEVEL** - *string* - Minimum logging level used by pino-http. (default 'info')
 
 ## Branching model justification
 
@@ -58,6 +63,8 @@ gitGraph
   * ***Justification .-*** Using the offcial docuemntation for scheduling task using cron, also used lifecycle events to get data when initializing the server.
 * [NestJS - Http Client](https://docs.nestjs.com/application/http-client)
   * ***Justification .-*** I have experience using fetch and axios, now I wanted to experiment with http client from nestJS.
+* [NestJS - Mongo DB](https://docs.nestjs.com/data/mongodb)
+  * ***Justification .-*** It is a long time I did not start a project in nest JS with graphQL, it is a good idea to follow the offical and newest way to do it.
 * [MDN - Global Object Errors](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error)
   * ***Justification .-*** I needed this documentation to make custom Errors that are not inheritted from HttpException.
 * [Pino Logger](https://getpino.io/#/docs/api?id=logger)
@@ -66,6 +73,8 @@ gitGraph
 * [Production Logging in NestJS with Pino](https://medium.com/@rxman/production-logging-in-nestjs-with-pino-f21ee5844bd4)
 * [Pino HTTP](https://github.com/pinojs/pino-http#api)
   * ***Justification .-*** Pino API documentation was not enough to set up completely, so I used this three(above) docuemtnation.
+* [Fast XML Parser](https://github.com/NaturalIntelligence/fast-xml-parser)
+  * ***Justification*** Library used for parsing XML to JS objects.
 * [Zod API](https://zod.dev/api)
   * ***Justification .-*** It is no a bad idea keeping handy Zod API.
 * [Mermaid.js](https://mermaid.js.org/intro/)
