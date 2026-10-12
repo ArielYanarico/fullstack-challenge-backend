@@ -14,6 +14,9 @@ export class Make {
 
   @Prop({ type: [VehicleTypeSchema], default: [] })
   vehicleTypes!: VehicleType[];
+
+  @Prop({ index: true })
+  runId?: string;
 }
 
 export const MakeSchema = SchemaFactory.createForClass(Make);

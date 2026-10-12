@@ -8,6 +8,7 @@ import { VehicleIngesterService } from './vehicle-ingester.service';
 import { VehicleFetchService } from './vehicle-fetch.service';
 import { VehicleParserService } from './vehicle-parser.service';
 import { VehicleTypesProcessor } from './vehicle-types.processor';
+import { IngestionFinalizeProcessor } from './ingestion-finalize.processor';
 import { Make, MakeSchema } from './schemas/make.schema';
 
 @Module({
@@ -36,32 +37,38 @@ import { Make, MakeSchema } from './schemas/make.schema';
         },
       }),
     }),
-    BullModule.registerQueueAsync({
-      name: 'vehicle-types',
-      imports: [ConfigModule],
-      inject: [ConfigService],
-      useFactory: (config: ConfigService) => ({
-        limiter: {
-          max: config.get<number>('INGESTION_RATE_LIMIT_MAX', 20),
-          duration: config.get<number>('INGESTION_RATE_LIMIT_DURATION_MS', 1000),
-        },
-        defaultJobOptions: {
-          attempts: config.get<number>('INGESTION_MAX_ATTEMPTS', 3),
-          backoff: {
-            type: 'exponential',
-            delay: 1000,
+    BullModule.registerQueueAsync(
+      {
+        name: 'vehicle-types',
+        imports: [ConfigModule],
+        inject: [ConfigService],
+        useFactory: (config: ConfigService) => ({
+          limiter: {
+            max: config.get<number>('INGESTION_RATE_LIMIT_MAX', 20),
+            duration: config.get<number>('INGESTION_RATE_LIMIT_DURATION_MS', 1000),
           },
-          removeOnComplete: true,
-          removeOnFail: false,
-        },
-      }),
-    }),
+          defaultJobOptions: {
+            attempts: config.get<number>('INGESTION_MAX_ATTEMPTS', 3),
+            backoff: {
+              type: 'exponential',
+              delay: 1000,
+            },
+            removeOnComplete: true,
+            removeOnFail: false,
+          },
+        }),
+      },
+      {
+        name: 'ingestion-finalize',
+      },
+    ),
   ],
   providers: [
     VehicleIngesterService,
     VehicleFetchService,
     VehicleParserService,
     VehicleTypesProcessor,
+    IngestionFinalizeProcessor,
   ],
   exports: [VehicleIngesterService]
 })
