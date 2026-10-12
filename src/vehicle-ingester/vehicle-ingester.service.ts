@@ -11,20 +11,20 @@ export class VehicleIngesterService {
   constructor(
     private readonly vehicleFetchService: VehicleFetchService,
     private readonly vehicleParseService: VehicleParserService,
-  ) {}
+  ) { }
 
-  async onApplicationBootstrap() {
+  async onApplicationBootstrap(): Promise<void> {
     this.logger.log('Starting up makes and vehicle types...');
     this.ingestVehicleData();
   }
 
   @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)
-  async handleCron() {
+  async handleCron(): Promise<void> {
     this.logger.log('Scheduled ingestion of makes and vehicle types data...');
     this.ingestVehicleData();
   }
 
-  private async ingestVehicleData() {
+  private async ingestVehicleData(): Promise<void> {
     const vehicleTypesXml = await this.vehicleFetchService.getVehicleTypesForMakeId('440');
     //this.vehicleFetchService.getAllMakes();
 

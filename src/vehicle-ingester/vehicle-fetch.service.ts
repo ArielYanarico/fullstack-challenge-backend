@@ -12,7 +12,7 @@ export class VehicleFetchService {
 
   constructor(@InjectHttpClient('vehicle-api') private readonly vehicleApi: HttpClient) { }
 
-  async getVehicleTypesForMakeId(makeId: string): Promise<any> {
+  async getVehicleTypesForMakeId(makeId: string): Promise<string> {
     try {
       const { data } = await this.vehicleApi.get<string>(this.typeURL, {
         params: { makeId },
@@ -28,11 +28,11 @@ export class VehicleFetchService {
       else
         new VehicleApiUnavailableException(this.logger, error as Error, makeId)
 
-      return;
+      return '';
     }
   }
 
-  async getAllMakes(): Promise<any> {
+  async getAllMakes(): Promise<string> {
     try {
       const { data } = await this.vehicleApi.get<string>(this.makesURL, {
         query: { format: 'xml' },
@@ -44,7 +44,7 @@ export class VehicleFetchService {
     } catch (error) {
       new VehicleApiUnavailableException(this.logger, error as Error)
 
-      return;
+      return '';
     }
   }
 }
