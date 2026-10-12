@@ -5,7 +5,6 @@ import { Model } from 'mongoose';
 
 import { VehicleFetchService } from './vehicle-fetch.service';
 import { VehicleParserService } from './vehicle-parser.service';
-import { VehicleType } from './schemas/vehicleType.schema';
 import { Make } from './schemas/make.schema';
 
 
@@ -16,9 +15,6 @@ export class VehicleIngesterService implements OnApplicationBootstrap {
   constructor(
     private readonly vehicleFetchService: VehicleFetchService,
     private readonly vehicleParseService: VehicleParserService,
-
-    @InjectModel(VehicleType.name)
-    private vehicleTypeModel: Model<VehicleType>,
 
     @InjectModel(Make.name)
     private makeModel: Model<Make>,
@@ -36,18 +32,16 @@ export class VehicleIngesterService implements OnApplicationBootstrap {
   }
 
   private async ingestAll(): Promise<void> {
-    const results = await Promise.allSettled([
-      this.ingestVehicleTypes(),
-      this.ingestMakes(),
-    ]);
-
-    results
-      .filter((result): result is PromiseRejectedResult => result.status === 'rejected')
-      .forEach(({ reason }) => this.logger.error({ err: reason }, 'Ingestion failed'));
+    try {
+      await this.ingestMakes();
+      await this.ingestVehicleTypes('440');
+    } catch (error) {
+      this.logger.error({ err: error }, 'Ingestion failed');
+    }
   }
 
-  private async ingestVehicleTypes(): Promise<void> {
-    const vehicleTypesXml = await this.vehicleFetchService.getVehicleTypesForMakeId('440');
+  private async ingestVehicleTypes(makeId: string): Promise<void> {
+    const vehicleTypesXml = await this.vehicleFetchService.getVehicleTypesForMakeId(makeId);
     const vehicleTypes = this.vehicleParseService.parseVehicleType(vehicleTypesXml);
 
     if (vehicleTypes.length === 0) {
@@ -55,9 +49,8 @@ export class VehicleIngesterService implements OnApplicationBootstrap {
       return;
     }
 
-    await this.vehicleTypeModel.deleteMany({});
-    await this.vehicleTypeModel.insertMany(vehicleTypes);
-    this.logger.log(`Vehicle types stored: ${vehicleTypes.length}`);
+    await this.makeModel.updateOne({ makeId }, { $set: { vehicleTypes } });
+    this.logger.log(`Vehicle types stored for make ${makeId}: ${vehicleTypes.length}`);
   }
 
   private async ingestMakes(): Promise<void> {

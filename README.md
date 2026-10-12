@@ -41,12 +41,17 @@ gitGraph
 * [*] Initialize the project using NestJS
 * [*] Set-up the config module (add ZOD for validation)
 * [*] Add and set-up nestJs scheduling to get vehicles every period of time
-* [ ] Set up the logging module
+* [*] Set up the logging module
 * [*] Design and make the first version the ingester
   * [*] Fetch vehicle type
   * [*] Fetch all makes
 * [*] Start with the approach for error handling
 * [*] Design and make the models for Mongo DB
+* [ ] FIX-hardcoded vehicle type (I realized that the endpoint for vehicle type accepts /:makeId so need to fix it and make it performant)
+  * [*] Add redis for caching
+  * [*] Update Schema to embed vehicle types in make
+  * [ ] Use redis to cache response data
+  * [ ] Remove hardcoded 440 and use a Queue manager to handle vehicle types with limit rate
 * [ ] Setup Unit test library
 * [ ] Add test for Ingester
 * [ ] Work on the service and resolver file
