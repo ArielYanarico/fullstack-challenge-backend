@@ -24,11 +24,9 @@ export class VehicleFetchService {
 
     } catch (error) {
       if (error instanceof HttpResponseError && error.status === 400)
-        new VehicleMakeBadRequestException(this.logger, makeId);
-      else
-        new VehicleApiUnavailableException(this.logger, error as Error, makeId)
-
-      return '';
+        throw new VehicleMakeBadRequestException(this.logger, makeId);
+      
+      throw new VehicleApiUnavailableException(this.logger, error as Error, makeId);
     }
   }
 
@@ -42,9 +40,7 @@ export class VehicleFetchService {
       return data;
 
     } catch (error) {
-      new VehicleApiUnavailableException(this.logger, error as Error)
-
-      return '';
+      throw new VehicleApiUnavailableException(this.logger, error as Error);
     }
   }
 }

@@ -3,10 +3,12 @@ import { Cron, CronExpression } from '@nestjs/schedule';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 
+import { InjectQueue } from '@nestjs/bullmq';
+import { Queue } from 'bullmq';
 import { VehicleFetchService } from './vehicle-fetch.service';
 import { VehicleParserService } from './vehicle-parser.service';
 import { Make } from './schemas/make.schema';
-
+import { VehicleTypeJobData } from './vehicle-types.processor';
 
 @Injectable()
 export class VehicleIngesterService implements OnApplicationBootstrap {
@@ -18,6 +20,9 @@ export class VehicleIngesterService implements OnApplicationBootstrap {
 
     @InjectModel(Make.name)
     private makeModel: Model<Make>,
+
+    @InjectQueue('vehicle-types')
+    private vehicleTypesQueue: Queue<VehicleTypeJobData>,
   ) { }
 
   async onApplicationBootstrap(): Promise<void> {
@@ -34,23 +39,9 @@ export class VehicleIngesterService implements OnApplicationBootstrap {
   private async ingestAll(): Promise<void> {
     try {
       await this.ingestMakes();
-      await this.ingestVehicleTypes('440');
     } catch (error) {
       this.logger.error({ err: error }, 'Ingestion failed');
     }
-  }
-
-  private async ingestVehicleTypes(makeId: string): Promise<void> {
-    const vehicleTypesXml = await this.vehicleFetchService.getVehicleTypesForMakeId(makeId);
-    const vehicleTypes = this.vehicleParseService.parseVehicleType(vehicleTypesXml);
-
-    if (vehicleTypes.length === 0) {
-      this.logger.warn('No vehicle types to store, keeping previus data');
-      return;
-    }
-
-    await this.makeModel.updateOne({ makeId }, { $set: { vehicleTypes } });
-    this.logger.log(`Vehicle types stored for make ${makeId}: ${vehicleTypes.length}`);
   }
 
   private async ingestMakes(): Promise<void> {
@@ -62,8 +53,29 @@ export class VehicleIngesterService implements OnApplicationBootstrap {
       return;
     }
 
-    await this.makeModel.deleteMany({});
-    await this.makeModel.insertMany(makeTypes);
-    this.logger.log(`Makes stored: ${makeTypes.length}`);
+    const bulkOps = makeTypes.map((make) => ({
+      updateOne: {
+        filter: { makeId: make.makeId },
+        update: {
+          $set: { makeName: make.makeName },
+          $setOnInsert: { vehicleTypes: [] },
+        },
+        upsert: true,
+      },
+    }));
+
+    await this.makeModel.bulkWrite(bulkOps);
+    this.logger.log(`Makes upserted: ${makeTypes.length}`);
+
+    const jobs = makeTypes.map((make) => ({
+      name: 'fetch-vehicle-types',
+      data: { makeId: make.makeId },
+      opts: {
+        jobId: `make-${make.makeId}`,
+      },
+    }));
+
+    await this.vehicleTypesQueue.addBulk(jobs);
+    this.logger.log(`Queued vehicle types jobs: ${jobs.length}`);
   }
 }
