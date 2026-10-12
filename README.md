@@ -58,6 +58,7 @@ gitGraph
 * [*] Work on the service and resolver file
   * [*] Index db document field to make access faster
   * [*] Add mandatory pagination since we dont want to get all vehicles by default in a single call
+* [*] Update docker compose to run development environment locally in a simple way
 * [ ] Update docuemtation 
 
 ### Nice to have tasks:
@@ -103,6 +104,9 @@ gitGraph
   * ***Justification .-*** I got this error because I created the ingester first without having at least one @Query() function.
 * [Bug - ES6 Modules not parsed byin Jest](https://jestjs.io/docs/30.0/ecmascript-modules)
 * [Bug - Manual Mock Approachj for mocking ES6 node modules](https://jestjs.io/docs/manual-mocks)
+* [Bug - Needed to restart TS server](https://stackoverflow.com/questions/54139158/cannot-find-name-describe-do-you-need-to-install-type-definitions-for-a-test)
   * ***Justification .-*** I read all the docuemntation above finding the best approach to handle ES6 node_modules mocking but nothing worked for me so I migrated testing to vitest.
 * [NestJS - Testing](https://docs.nestjs.com/fundamentals/testing#installation) 
   * ***Justification .-*** I followed this docuemntation to migrate from jest to vitest.
+* [Docs Docker - Dokcerfile](https://docs.docker.com/reference/dockerfile/)
+  * ***Justification .-*** Needed to remember Dockerfile Syntax.

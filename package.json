@@ -18,7 +18,9 @@
     "test:cov": "vitest run --coverage",
     "test:debug": "vitest --inspect-brk --no-file-parallelism",
     "docker:up": "docker compose up -d",
-    "docker:down": "docker compose down"
+    "docker:up:build": "docker compose up -d --build",
+    "docker:down": "docker compose down",
+    "docker:logs": "docker compose logs -f"
   },
   "dependencies": {
     "@apollo/server": "^5.5.1",

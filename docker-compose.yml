@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   mongodb:
     image: mongo:7
@@ -9,6 +7,13 @@ services:
       - "127.0.0.1:27017:27017"
     volumes:
       - mongo-data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.runCommand('ping').ok"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - challenge-net
 
   redis:
     image: redis:7-alpine
@@ -19,7 +24,46 @@ services:
       - "127.0.0.1:6379:6379"
     volumes:
       - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - challenge-net
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: challenge-backend
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - PORT=3000
+      - PROVIDER_VEHICLES_URL=https://vpic.nhtsa.dot.gov/api/vehicles
+      - LOGGING_LEVEL=info
+      - DB_CONNECTION_URI=mongodb://mongodb:27017/challenge-db
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - INGESTION_CONCURRENCY=10
+      - INGESTION_RATE_LIMIT_MAX=20
+      - INGESTION_RATE_LIMIT_DURATION_MS=1000
+      - INGESTION_MAX_ATTEMPTS=3
+    depends_on:
+      mongodb:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - challenge-net
 
 volumes:
   mongo-data:
   redis-data:
+
+networks:
+  challenge-net:
+    driver: bridge
