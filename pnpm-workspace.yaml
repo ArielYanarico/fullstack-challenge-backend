@@ -1,5 +1,6 @@
 allowBuilds:
   '@apollo/protobufjs': true
   '@parcel/watcher': false
+  '@swc/core': true
   msgpackr-extract: true
   unrs-resolver: false

@@ -3,6 +3,7 @@ import { Logger } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Job } from 'bullmq';
 import { Model } from 'mongoose';
+
 import { Make } from './schemas/make.schema';
 
 export interface FinalizeJobData {

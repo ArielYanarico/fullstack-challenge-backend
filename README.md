@@ -52,17 +52,19 @@ gitGraph
   * [*] Update Schema to embed vehicle types in make
   * [*] Use redis to cache data
   * [*] Remove hardcoded 440 and use a Queue manager to handle vehicle types with limit rate
-* [ ] Setup Unit test library
-* [ ] Add test for Ingester
+* [*] Setup Unit test library
+* [*] Add tests for Ingester
+* [ ] Add tests for Make module
 * [*] Work on the service and resolver file
   * [*] Index db document field to make access faster
   * [*] Add mandatory pagination since we dont want to get all vehicles by default in a single call
-* [ ] Add/update Exception filters (if needed)
+* [ ] Update docuemtation 
 
 ### Nice to have tasks:
-* [ ] Add a retry capability to cron jobs when the fail.
+* [*] ~~Add a retry capability to cron jobs when the fail NOT NEEDED ANYMORE.~~
 * [*] ~~Update vehicle parser service to unify functions and avoid having repeated code NOT NEEDED ANYMORE~~.
 * [*] Add a flag to get all makes even if it takes its time.
+* [ ] Add/update Exception filters (if needed)
 
 ## Bibliography (references)
 
@@ -99,3 +101,8 @@ gitGraph
   * ***Justification .-*** It is my first time using mermaid for documentation diagrams, so I am following its syntax page.
 * [Bug - Query root type must be provided](https://stackoverflow.com/questions/64105940/graphqlerror-query-root-type-must-be-provided)
   * ***Justification .-*** I got this error because I created the ingester first without having at least one @Query() function.
+* [Bug - ES6 Modules not parsed byin Jest](https://jestjs.io/docs/30.0/ecmascript-modules)
+* [Bug - Manual Mock Approachj for mocking ES6 node modules](https://jestjs.io/docs/manual-mocks)
+  * ***Justification .-*** I read all the docuemntation above finding the best approach to handle ES6 node_modules mocking but nothing worked for me so I migrated testing to vitest.
+* [NestJS - Testing](https://docs.nestjs.com/fundamentals/testing#installation) 
+  * ***Justification .-*** I followed this docuemntation to migrate from jest to vitest.
