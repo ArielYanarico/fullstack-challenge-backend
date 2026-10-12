@@ -8,10 +8,11 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (config: ConfigService) => {
-        const isDev = config.get('NODE_ENV') === 'development';
+        const isDev = config.get<string>('NODE_ENV') === 'development';
+        const level = config.get<string>('LOGGING_LEVEL');
         return {
           pinoHttp: {
-            level: isDev ? 'debug' : 'info',
+            level,
             transport: {
               targets: [
                 {
