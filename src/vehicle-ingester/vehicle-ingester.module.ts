@@ -7,6 +7,7 @@ import { VehicleIngesterService } from './vehicle-ingester.service';
 import { VehicleFetchService } from './vehicle-fetch.service';
 import { VehicleParserService } from './vehicle-parser.service';
 import { VehicleType, VehicleTypeSchema } from './schemas/vehicleType.schema';
+import { Make, MakeSchema } from './schemas/make.schema';
 
 @Module({
   imports: [
@@ -21,7 +22,11 @@ import { VehicleType, VehicleTypeSchema } from './schemas/vehicleType.schema';
     MongooseModule.forFeature([
       {
         name: VehicleType.name,
-        schema: VehicleTypeSchema
+        schema: VehicleTypeSchema,
+      },
+      {
+        name: Make.name,
+        schema: MakeSchema,
       }
     ]),
   ],

@@ -44,7 +44,7 @@ gitGraph
   * [*] Fetch vehicle type
   * [*] Fetch all makes
 * [*] Start with the approach for error handling
-* [ ] Design and make the models for Mongo DB
+* [*] Design and make the models for Mongo DB
 * [ ] Setup Unit test library
 * [ ] Add test for Ingester
 * [ ] Work on the service and resolver file
@@ -52,6 +52,7 @@ gitGraph
 
 ### Nice to have tasks:
 * [ ] Add a retry capability to cron jobs when the fail.
+* [ ] Update vehicle parser service to unify functions and avoid having repeated code.
 
 ## Bibliography (references)
 

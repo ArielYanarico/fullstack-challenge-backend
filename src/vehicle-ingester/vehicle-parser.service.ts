@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { XMLParser } from 'fast-xml-parser';
 import { VehicleTypeResponseFromXML, VehicleType, VehicleTypeFromXML } from './types/vehicleType.type';
 import { XmlParsingException } from './exceptions/xmlParsing.exception';
+import { MakeFromXML, MakeResponseFromXML, MakeType } from './types/make.type';
 
 @Injectable()
 export class VehicleParserService {
@@ -31,6 +32,32 @@ export class VehicleParserService {
     return {
       typeId: data.VehicleTypeId?.toString() ?? '',
       typeName: data.VehicleTypeName ?? 'Unknown',
+    }
+  }
+
+  parseMakes(xmlData: string): MakeType[] {
+    try {
+      const jsonData: MakeResponseFromXML = this.xmlParser.parse(xmlData);
+      const makes = jsonData?.Response?.Results?.AllVehicleMakes;
+
+      if (!makes || !Array.isArray(makes)) throw new XmlParsingException(this.logger);
+
+      const makesMapped = makes.map(this.mapMake);
+
+      this.logger.log({ vehicleTypesMapped: makesMapped }, 'Makes parsed successfully!')
+      return makesMapped;
+    } catch (error) {
+      if (error instanceof XmlParsingException)
+        return [];
+      else
+        throw error;
+    }
+  }
+
+    private mapMake(data: MakeFromXML): MakeType {
+    return {
+      makeId: data.Make_ID?.toString() ?? '',
+      makeName: data.Make_Name ?? 'Make Unknown',
     }
   }
 }

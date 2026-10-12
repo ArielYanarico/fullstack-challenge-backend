@@ -1,3 +1,4 @@
+import { BaseResponse, ResponseFromXML } from "./shared.type"
 
 export interface VehicleType {
   typeId: string,
@@ -9,13 +10,12 @@ export interface VehicleTypeFromXML {
   VehicleTypeName: string,
 }
 
-export interface VehicleTypeResponseFromXML {
-  Response: {
-    Count: number,
-    Message: string,
-    SearchCriteria: string,
-    Results: {
-      VehicleTypesForMakeIds: [VehicleTypeFromXML]
-    }
-  },
+export interface VehicleTypeResponse extends BaseResponse {
+  Results: {
+    VehicleTypesForMakeIds: [VehicleTypeFromXML]
+  }
+}
+
+export interface VehicleTypeResponseFromXML extends ResponseFromXML {
+  Response: VehicleTypeResponse,
 }
