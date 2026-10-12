@@ -47,21 +47,22 @@ gitGraph
   * [*] Fetch all makes
 * [*] Start with the approach for error handling
 * [*] Design and make the models for Mongo DB
-* [ ] FIX-hardcoded vehicle type (I realized that the endpoint for vehicle type accepts /:makeId so need to fix it and make it performant)
+* [*] FIX-hardcoded vehicle type (I realized that the endpoint for vehicle type accepts /:makeId so need to fix it and make it performant)
   * [*] Add redis for caching
   * [*] Update Schema to embed vehicle types in make
-  * [ ] Use redis to cache response data
-  * [ ] Remove hardcoded 440 and use a Queue manager to handle vehicle types with limit rate
+  * [*] Use redis to cache data
+  * [*] Remove hardcoded 440 and use a Queue manager to handle vehicle types with limit rate
 * [ ] Setup Unit test library
 * [ ] Add test for Ingester
-  * [ ] Add mandatory pagination since we dont want to get all vehicles by default in a single call
 * [ ] Work on the service and resolver file
+  * [*] Index db document field to make access faster
+  * [ ] Add mandatory pagination since we dont want to get all vehicles by default in a single call
 * [ ] Add/update Exception filters (if needed)
 
 ### Nice to have tasks:
 * [ ] Add a retry capability to cron jobs when the fail.
 * [ ] Update vehicle parser service to unify functions and avoid having repeated code.
-* [ ] Add a flag to get all makes even if it takes its time.
+* [*] Add a flag to get all makes even if it takes its time.
 
 ## Bibliography (references)
 
@@ -80,6 +81,8 @@ gitGraph
   * ***Justification .-*** I tried to follow this approach to merge vehicle types with makes but didn't work at all.
 * [NestJS - Bullmq](https://docs.nestjs.com/application/queues#bullmq-installation)
   * ***Justification .-*** After fixing the hardcoded 440 request I noticed that getting all vehicle types for makes takes its time so I decided to add Bullmq to add a rate limit and execute call to api in paralallel and in  batches.
+* [NestJS - Resolvers](https://docs.nestjs.com/graphql/resolvers#args-decorator-options)
+  * ***Justification .-*** Needed to review and argument type sintax.
 * [MDN - Global Object Errors](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error)
   * ***Justification .-*** I needed this documentation to make custom Errors that are not inheritted from HttpException.
 * [Pino Logger](https://getpino.io/#/docs/api?id=logger)
