@@ -27,6 +27,9 @@ COPY package.json pnpm-lock.yaml pnpm-workspace.yaml* ./
 RUN pnpm install --prod --frozen-lockfile
 
 COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/src/schema.gql ./src/schema.gql
+
+RUN mkdir -p /app/logs /app/src && chown -R node:node /app
 
 USER node
 
