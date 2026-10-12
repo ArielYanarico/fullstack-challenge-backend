@@ -11,6 +11,7 @@ import { validationSchema } from './config/env.validation.schema'
 import { VehicleIngesterModule } from './vehicle-ingester/vehicle-ingester.module';
 import { MakesModule } from './makes/makes.module';
 import { AppLoggerModule } from './app-logger/app-logger.module';
+import { DbConfigModule } from './config/dbConfig.module';
 
 @Module({
   imports: [
@@ -26,9 +27,9 @@ import { AppLoggerModule } from './app-logger/app-logger.module';
     }),
     ScheduleModule.forRoot(),
     AppLoggerModule,
+    DbConfigModule,
     VehicleIngesterModule,
     MakesModule,
-    AppLoggerModule,
   ],
   controllers: [AppController],
   providers: [AppService],

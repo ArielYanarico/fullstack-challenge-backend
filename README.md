@@ -11,6 +11,7 @@ This is the backend for fullstack techincal challenge
 * **PORT** - *int* - Port number exposed where backend runs. (default 3000)
 * **PROVIDER_VEHICLES_URL** - *string* - URL consumed by Vehicles ingester to get "makes" and "vehicle types".(required)
 * **LOGGING_LEVEL** - *string* - Minimum logging level used by pino-http. (default 'info')
+* **DB_CONNECTION_URI** - *string* - Mongo connection uri. (default 'mongodb://localhost:27017/challenge-db')
 
 ## Branching model justification
 
