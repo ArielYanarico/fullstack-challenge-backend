@@ -54,14 +54,14 @@ gitGraph
   * [*] Remove hardcoded 440 and use a Queue manager to handle vehicle types with limit rate
 * [ ] Setup Unit test library
 * [ ] Add test for Ingester
-* [ ] Work on the service and resolver file
+* [*] Work on the service and resolver file
   * [*] Index db document field to make access faster
-  * [ ] Add mandatory pagination since we dont want to get all vehicles by default in a single call
+  * [*] Add mandatory pagination since we dont want to get all vehicles by default in a single call
 * [ ] Add/update Exception filters (if needed)
 
 ### Nice to have tasks:
 * [ ] Add a retry capability to cron jobs when the fail.
-* [ ] Update vehicle parser service to unify functions and avoid having repeated code.
+* [*] ~~Update vehicle parser service to unify functions and avoid having repeated code NOT NEEDED ANYMORE~~.
 * [*] Add a flag to get all makes even if it takes its time.
 
 ## Bibliography (references)
