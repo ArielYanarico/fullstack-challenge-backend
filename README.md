@@ -54,12 +54,14 @@ gitGraph
   * [ ] Remove hardcoded 440 and use a Queue manager to handle vehicle types with limit rate
 * [ ] Setup Unit test library
 * [ ] Add test for Ingester
+  * [ ] Add mandatory pagination since we dont want to get all vehicles by default in a single call
 * [ ] Work on the service and resolver file
 * [ ] Add/update Exception filters (if needed)
 
 ### Nice to have tasks:
 * [ ] Add a retry capability to cron jobs when the fail.
 * [ ] Update vehicle parser service to unify functions and avoid having repeated code.
+* [ ] Add a flag to get all makes even if it takes its time.
 
 ## Bibliography (references)
 
@@ -76,6 +78,8 @@ gitGraph
   * ***Justification .-*** For integrating mongo DB I used this documentation.
 * [NestJS - Unions and Enums](https://docs.nestjs.com/graphql/unions-and-enums#code-first-1)
   * ***Justification .-*** I tried to follow this approach to merge vehicle types with makes but didn't work at all.
+* [NestJS - Bullmq](https://docs.nestjs.com/application/queues#bullmq-installation)
+  * ***Justification .-*** After fixing the hardcoded 440 request I noticed that getting all vehicle types for makes takes its time so I decided to add Bullmq to add a rate limit and execute call to api in paralallel and in  batches.
 * [MDN - Global Object Errors](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error)
   * ***Justification .-*** I needed this documentation to make custom Errors that are not inheritted from HttpException.
 * [Pino Logger](https://getpino.io/#/docs/api?id=logger)
