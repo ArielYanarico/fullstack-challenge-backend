@@ -31,9 +31,6 @@ export class VehicleTypesProcessor extends WorkerHost {
     const xml = await this.vehicleFetchService.getVehicleTypesForMakeId(makeId);
     const vehicleTypes = this.vehicleParserService.parseVehicleType(xml);
 
-    await this.makeModel.updateOne(
-      { makeId },
-      { $set: { vehicleTypes } },
-    );
+    await this.makeModel.updateOne({ makeId }, { $set: { vehicleTypes } });
   }
 }

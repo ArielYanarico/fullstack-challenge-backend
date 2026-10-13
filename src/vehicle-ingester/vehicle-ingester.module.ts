@@ -25,7 +25,7 @@ import { Make, MakeSchema } from './schemas/make.schema';
       {
         name: Make.name,
         schema: MakeSchema,
-      }
+      },
     ]),
     BullModule.forRootAsync({
       imports: [ConfigModule],
@@ -45,7 +45,10 @@ import { Make, MakeSchema } from './schemas/make.schema';
         useFactory: (config: ConfigService) => ({
           limiter: {
             max: config.get<number>('INGESTION_RATE_LIMIT_MAX', 20),
-            duration: config.get<number>('INGESTION_RATE_LIMIT_DURATION_MS', 1000),
+            duration: config.get<number>(
+              'INGESTION_RATE_LIMIT_DURATION_MS',
+              1000,
+            ),
           },
           defaultJobOptions: {
             attempts: config.get<number>('INGESTION_MAX_ATTEMPTS', 3),
@@ -70,7 +73,6 @@ import { Make, MakeSchema } from './schemas/make.schema';
     VehicleTypesProcessor,
     IngestionFinalizeProcessor,
   ],
-  exports: [VehicleIngesterService]
+  exports: [VehicleIngesterService],
 })
-
 export class VehicleIngesterModule {}

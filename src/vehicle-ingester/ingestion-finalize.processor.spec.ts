@@ -20,12 +20,14 @@ describe('IngestionFinalizeProcessor', () => {
 
     const job = {
       data: { runId: 'run-123' },
-    } as any;
+    };
 
     // Act
-    await processor.process(job);
+    await processor.process(job as any);
 
     // Assert
-    expect(makeModel.deleteMany).toHaveBeenCalledWith({ runId: { $ne: 'run-123' } });
+    expect(makeModel.deleteMany).toHaveBeenCalledWith({
+      runId: { $ne: 'run-123' },
+    });
   });
 });

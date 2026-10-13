@@ -29,12 +29,14 @@ export class VehicleIngesterService implements OnApplicationBootstrap {
 
     @InjectQueue('ingestion-finalize')
     private finalizeQueue: Queue<FinalizeJobData>,
-  ) { }
+  ) {}
 
   async onApplicationBootstrap(): Promise<void> {
     const existingCount = await this.makeModel.countDocuments();
     if (existingCount > 0) {
-      this.logger.log(`Database already has ${existingCount} makes, skipping initial ingestion`);
+      this.logger.log(
+        `Database already has ${existingCount} makes, skipping initial ingestion`,
+      );
       return;
     }
 
@@ -60,7 +62,7 @@ export class VehicleIngesterService implements OnApplicationBootstrap {
     try {
       await this.ingestMakes(runId);
     } catch (error) {
-      this.logger.error({ err: error }, 'Ingestion failed');
+      this.logger.error({ err: error as Error }, 'Ingestion failed');
     } finally {
       this.isIngesting = false;
     }

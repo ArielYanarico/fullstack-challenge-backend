@@ -19,7 +19,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
                   target: 'pino-pretty',
                   options: {
                     colorize: isDev,
-                    singleLine: true
+                    singleLine: true,
                   },
                 },
                 {
@@ -30,17 +30,17 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
                     size: '20m',
                     interval: '1d',
                     keep: '10',
-                  }
-                }
-              ]
+                  },
+                },
+              ],
             },
             serializers: {
-              req: (req) => ({
+              req: (req: { method: string; url: string; id: string }) => ({
                 method: req.method,
                 url: req.url,
                 requestId: req.id,
               }),
-              res: (res) => ({
+              res: (res: { statusCode: string }) => ({
                 statusCode: res.statusCode,
               }),
             },
@@ -50,5 +50,4 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
     }),
   ],
 })
-
-export class AppLoggerModule { }
+export class AppLoggerModule {}

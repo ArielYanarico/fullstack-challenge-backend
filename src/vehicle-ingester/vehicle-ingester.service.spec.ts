@@ -101,7 +101,9 @@ describe('VehicleIngesterService', () => {
     it('should trigger ingestAll if db is empty', async () => {
       // Arrange
       makeModel.countDocuments.mockResolvedValue(0);
-      const ingestAllSpy = vi.spyOn(service as any, 'ingestAll').mockResolvedValue(undefined);
+      const ingestAllSpy = vi
+        .spyOn(service as any, 'ingestAll')
+        .mockResolvedValue(undefined);
 
       // Act
       await service.onApplicationBootstrap();
@@ -126,7 +128,9 @@ describe('VehicleIngesterService', () => {
       await service.handleCron();
 
       // Assert
-      expect(vehicleParserService.parseMakes).toHaveBeenCalledWith('<xml>makes</xml>');
+      expect(vehicleParserService.parseMakes).toHaveBeenCalledWith(
+        '<xml>makes</xml>',
+      );
       expect(vehicleTypesQueue.addBulk).toHaveBeenCalledWith([
         expect.objectContaining({
           name: 'fetch-vehicle-types',

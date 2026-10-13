@@ -1,7 +1,7 @@
 export interface BaseResponse {
-  Count: number,
-  Message: string,
-  SearchCriteria: string,
+  Count: number;
+  Message: string;
+  SearchCriteria: string;
 }
 
 export interface ResponseFromXML {

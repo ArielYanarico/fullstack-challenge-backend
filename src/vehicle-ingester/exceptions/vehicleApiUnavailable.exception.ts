@@ -1,9 +1,9 @@
-import { Logger } from "@nestjs/common";
+import { Logger } from '@nestjs/common';
 
 export class VehicleApiUnavailableException extends Error {
   constructor(logger: Logger, originalError: Error, id?: string) {
-    const details = (originalError as any).message ?? 'N/A';
-    const message = `Failed to fetch from vehicles api${id ? ` for make id:${id}` : ''}. Details: ${details}`
+    const details = originalError.message ?? 'N/A';
+    const message = `Failed to fetch from vehicles api${id ? ` for make id:${id}` : ''}. Details: ${details}`;
     super(message);
 
     this.name = VehicleApiUnavailableException.name;

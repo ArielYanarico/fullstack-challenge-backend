@@ -12,7 +12,9 @@ export class MakesService {
     private readonly makeModel: Model<Make>,
   ) {}
 
-  private buildFilter(args: Pick<GetMakesArgs, 'makeName' | 'makeId'>): Record<string, any> {
+  private buildFilter(
+    args: Pick<GetMakesArgs, 'makeName' | 'makeId'>,
+  ): Record<string, any> {
     const filter: Record<string, any> = {};
 
     if (args.makeId) {
@@ -20,7 +22,9 @@ export class MakesService {
     }
 
     if (args.makeName) {
-      const escaped = args.makeName.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const escaped = args.makeName
+        .trim()
+        .replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
       filter.makeName = { $regex: escaped, $options: 'i' };
     }
 
@@ -45,7 +49,9 @@ export class MakesService {
     return query.exec();
   }
 
-  async count(args: Pick<GetMakesArgs, 'makeName' | 'makeId'>): Promise<number> {
+  async count(
+    args: Pick<GetMakesArgs, 'makeName' | 'makeId'>,
+  ): Promise<number> {
     const filter = this.buildFilter(args);
     return this.makeModel.countDocuments(filter).exec();
   }

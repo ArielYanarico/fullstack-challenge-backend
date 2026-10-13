@@ -44,7 +44,9 @@ describe('VehicleTypesProcessor', () => {
 
   it('should fetch XML, parse types, and update make document', async () => {
     // Arrange
-    vehicleFetchService.getVehicleTypesForMakeId.mockResolvedValue('<xml>types</xml>');
+    vehicleFetchService.getVehicleTypesForMakeId.mockResolvedValue(
+      '<xml>types</xml>',
+    );
     vehicleParserService.parseVehicleType.mockReturnValue([
       { typeId: '1', typeName: 'Passenger Car' },
     ]);
@@ -58,8 +60,12 @@ describe('VehicleTypesProcessor', () => {
     await processor.process(job);
 
     // Assert
-    expect(vehicleFetchService.getVehicleTypesForMakeId).toHaveBeenCalledWith('440');
-    expect(vehicleParserService.parseVehicleType).toHaveBeenCalledWith('<xml>types</xml>');
+    expect(vehicleFetchService.getVehicleTypesForMakeId).toHaveBeenCalledWith(
+      '440',
+    );
+    expect(vehicleParserService.parseVehicleType).toHaveBeenCalledWith(
+      '<xml>types</xml>',
+    );
     expect(makeModel.updateOne).toHaveBeenCalledWith(
       { makeId: '440' },
       { $set: { vehicleTypes: [{ typeId: '1', typeName: 'Passenger Car' }] } },

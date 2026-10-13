@@ -7,7 +7,7 @@ import { ScheduleModule } from '@nestjs/schedule';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { validationSchema } from './config/env.validation.schema'
+import { validationSchema } from './config/env.validation.schema';
 import { VehicleIngesterModule } from './vehicle-ingester/vehicle-ingester.module';
 import { MakesModule } from './makes/makes.module';
 import { AppLoggerModule } from './app-logger/app-logger.module';

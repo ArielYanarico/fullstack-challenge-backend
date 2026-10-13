@@ -1,5 +1,9 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { HttpClient, HttpResponseError, InjectHttpClient } from '@nestjs/http-client';
+import {
+  HttpClient,
+  HttpResponseError,
+  InjectHttpClient,
+} from '@nestjs/http-client';
 import { VehicleMakeBadRequestException } from './exceptions/vehicleMakeBadRequest.exception';
 import { VehicleApiUnavailableException } from './exceptions/vehicleApiUnavailable.exception';
 
@@ -10,7 +14,9 @@ export class VehicleFetchService {
   private readonly typeURL = '/GetVehicleTypesForMakeId/:makeId';
   private readonly makesURL = '/getallmakes';
 
-  constructor(@InjectHttpClient('vehicle-api') private readonly vehicleApi: HttpClient) { }
+  constructor(
+    @InjectHttpClient('vehicle-api') private readonly vehicleApi: HttpClient,
+  ) {}
 
   async getVehicleTypesForMakeId(makeId: string): Promise<string> {
     try {
@@ -19,14 +25,19 @@ export class VehicleFetchService {
         query: { format: 'xml' },
       });
 
-      this.logger.debug(`Vehicle types fetched Successfully for make id: ${makeId}`);
+      this.logger.debug(
+        `Vehicle types fetched Successfully for make id: ${makeId}`,
+      );
       return data;
-
     } catch (error) {
       if (error instanceof HttpResponseError && error.status === 400)
         throw new VehicleMakeBadRequestException(this.logger, makeId);
-      
-      throw new VehicleApiUnavailableException(this.logger, error as Error, makeId);
+
+      throw new VehicleApiUnavailableException(
+        this.logger,
+        error as Error,
+        makeId,
+      );
     }
   }
 
@@ -38,7 +49,6 @@ export class VehicleFetchService {
 
       this.logger.log('All makes fetched Successfully!');
       return data;
-
     } catch (error) {
       throw new VehicleApiUnavailableException(this.logger, error as Error);
     }
