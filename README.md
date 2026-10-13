@@ -1,2 +1,262 @@
 # fullstack-challenge-backend
+
 This is the backend for fullstack techincal challenge
+
+## Set up
+
+Before running this project, make sure you have installed:
+
+* Node.js 24.x or higher
+* pnpm 11.x or higher (I tested with npm in windows and worked)
+* Docker Desktop (If you have Docker Engine make sure docker compose is installed as well)
+
+Install dependencies:
+```bash
+pnpm install
+```
+
+Use `.env.example` to create a `.env` file with your custom values, however take in account that docker uses `.env.example` for creating and running backend container:
+```bash
+cp .env.example .env
+```
+
+## Run locally
+
+One command run (builds and runs MongoDB, Redis and Backend in containers):
+```bash
+pnpm docker:up
+```
+
+For checking container logs or stop the containers:
+```bash
+pnpm docker:logs
+pnpm docker:down
+```
+
+Running docker for mongo and redis but running backend in console:
+```bash
+pnpm docker:infra
+pnpm start:dev
+```
+
+Running only MongoDB or only Redis in docker (in case you have the other installed locally):
+```bash
+pnpm docker:db
+pnpm docker:redis
+```
+
+Running unit tests:
+```bash
+pnpm test
+```
+
+## Environment variables
+
+* **NODE_ENV** - *enum* - ['development', 'production', 'test'] Define the app environment. (default 'development')
+* **PORT** - *int* - Port number exposed where backend runs. (default 3000)
+* **PROVIDER_VEHICLES_URL** - *string* - URL consumed by Vehicles ingester to get "makes" and "vehicle types".(required)
+* **LOGGING_LEVEL** - *enum* - ['info', 'warn', 'error', 'debug'] Minimum logging level used by pino-http. (default 'info')
+* **DB_CONNECTION_URI** - *string* - Mongo connection uri. (default 'mongodb://localhost:27017/challenge-db')
+* **REDIS_HOST** - *string* - Redis host for caching data and BullMQ queues. (default 'localhost')
+* **REDIS_PORT** - *int* - The port where redis is exposed. (default 6379)
+* **INGESTION_CONCURRENCY** - *int* - Number of concurrent jobs processed by BullMQ worker when fetching vehicle types. (default 10)
+* **INGESTION_RATE_LIMIT_MAX** - *int* - Maximum number of requests allowed per duration window in BullMQ worker. (default 20)
+* **INGESTION_RATE_LIMIT_DURATION_MS** - *int* - Duration window in milliseconds for BullMQ rate limiter. (default 1000)
+* **INGESTION_MAX_ATTEMPTS** - *int* - Maximum number of retry attempts when a queue job fails. (default 3)
+
+## Build Instructions
+
+Compiling TypeScript source files into `dist/` folder:
+```bash
+pnpm build
+```
+
+Running the compiled production build locally (make sure MongoDB and Redis are running):
+```bash
+pnpm start:prod
+```
+
+Building the Docker image using docker compose (uses multi-stage `docker/Dockerfile`):
+```bash
+docker compose -f docker/docker-compose.yml build
+```
+
+## Data model
+
+Vehicle types are embedded directly inside the `Make` document in MongoDB to avoid joins and keep GraphQL queries fast.
+
+* **makeId** - *string* - Unique identifier from the provider API. (required, unique index)
+* **makeName** - *string* - Name of the vehicle make. (required, indexed)
+* **vehicleTypes** - *VehicleType[]* - Embedded list of vehicle types for this make. (default `[]`)
+  * **typeId** - *string* - Identifier of the vehicle type. (required)
+  * **typeName** - *string* - Name of the vehicle type. (required)
+* **runId** - *string* - Ingestion run identifier used to clean up stale makes after sync finishes. (indexed)
+
+## GraphQL schema
+
+The schema is auto-generated in `src/schema.gql` (code-first approach) and exposed at `POST /graphql`:
+
+```graphql
+type VehicleTypeModel {
+  typeId: String!
+  typeName: String!
+}
+
+type MakeModel {
+  makeId: String!
+  makeName: String!
+  vehicleTypes: [VehicleTypeModel!]!
+}
+
+type Query {
+  makes(page: Int = 1, limit: Int = 50, all: Boolean = false, makeName: String, makeId: String): [MakeModel!]!
+  makesCount(makeName: String, makeId: String): Int!
+}
+```
+
+Query arguments:
+
+* **page** - *int* - Page number for pagination. (default 1)
+* **limit** - *int* - Number of items per page, max 100. (default 50)
+* **all** - *boolean* - If `true`, bypasses pagination and returns all matching makes. (default `false`)
+* **makeName** - *string* - Case-insensitive partial match filter by make name. (optional)
+* **makeId** - *string* - Exact match filter by make ID. (optional)
+
+Example query and response:
+```graphql
+query {
+  makes(makeId: "440") {
+    makeId
+    makeName
+    vehicleTypes {
+      typeId
+      typeName
+    }
+  }
+}
+```
+```json
+{
+  "data": {
+    "makes": [
+      {
+        "makeId": "440",
+        "makeName": "ASTON MARTIN",
+        "vehicleTypes": [
+          {
+            "typeId": "2",
+            "typeName": "Passenger Car"
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+## API Documentation
+
+Detailed explanations of the internal architecture and strategies can be found in the `documentation/` folder:
+
+* [Internal Ingestion Pipeline](./documentation/ingestion-pipeline.md) - How vehicle makes and types are fetched, parsed, queued with BullMQ and stored in MongoDB.
+* [Error Handling Strategy](./documentation/error-handling.md) - Custom exceptions, XML parser fallbacks, queue fault isolation and retry rules.
+* [Logging Strategy](./documentation/logging-strategy.md) - Pino logger setup, log levels, HTTP serializers and daily file rotation.
+* [Configuration Approach](./documentation/configuration-approach.md) - Environment variables validation with Zod and async module configuration.
+
+## Branching model justification
+
+For this challenge I will work on development branch merging it when I finish the challenge simulating a production deliver, I also won't work in pre-prod environment (staging) or QA env, in order to save time we are not to have branches for those environment all testing will be performed locally in multiple platforms (Linux and Windows using VMs). Finally as in this challege there are only one person as developer it does not make sense to have feature branchs, however I will put all features and bugfixes in atomic commits. 
+
+```mermaid
+---
+title: Branching Model
+---
+gitGraph
+   commit id: "initial"
+   commit id: " "
+   branch develop
+   checkout develop
+   commit id: "feature-1"
+   commit id: "bugfix-1"
+   commit id: "feature-2"
+   checkout main
+   merge develop
+   commit id: "hotfix-1"
+```
+
+## Tasks (TODO):
+
+* [*] Initialize the project using NestJS
+* [*] Set-up the config module (add ZOD for validation)
+* [*] Add and set-up nestJs scheduling to get vehicles every period of time
+* [*] Set up the logging module
+* [*] Design and make the first version the ingester
+  * [*] Fetch vehicle type
+  * [*] Fetch all makes
+* [*] Start with the approach for error handling
+* [*] Design and make the models for Mongo DB
+* [*] FIX-hardcoded vehicle type (I realized that the endpoint for vehicle type accepts /:makeId so need to fix it and make it performant)
+  * [*] Add redis for caching
+  * [*] Update Schema to embed vehicle types in make
+  * [*] Use redis to cache data
+  * [*] Remove hardcoded 440 and use a Queue manager to handle vehicle types with limit rate
+* [*] Setup Unit test library
+* [*] Add tests for Ingester
+* [ ] Add tests for Make module
+* [*] Work on the service and resolver file
+  * [*] Index db document field to make access faster
+  * [*] Add mandatory pagination since we dont want to get all vehicles by default in a single call
+* [*] Update docker compose to run development environment locally in a simple way
+* [*] Update docuemtation 
+
+### Nice to have tasks:
+* [*] ~~Add a retry capability to cron jobs when the fail NOT NEEDED ANYMORE.~~
+* [*] ~~Update vehicle parser service to unify functions and avoid having repeated code NOT NEEDED ANYMORE~~.
+* [*] Add a flag to get all makes even if it takes its time.
+* [ ] Add/update Exception filters (if needed)
+* [ ] Improve unit testing for mocking xml endpoint
+* [ ] Add CI pipeline yml file
+
+## Bibliography (references)
+
+* [NestJS - GraphQL quick start](https://docs.nestjs.com/graphql/quick-start)
+  * ***Justification .-*** It is a long time I did not start a project in nest JS with graphQL, it is a good idea to follow the offical and newest way to do it.
+* [NestJS - Configuration](https://docs.nestjs.com/application/configuration)
+  * ***Justification .-*** Using the offcial docuemntation for config hadling is the best option in my mind.
+* [NestJS - Task Scheduling](https://docs.nestjs.com/application/configuration)
+* [NestJS - Life Cycle Events](https://docs.nestjs.com/fundamentals/lifecycle-events#asynchronous-initialization)
+  * ***Justification .-*** Using the offcial docuemntation for scheduling task using cron, also used lifecycle events to get data when initializing the server.
+* [NestJS - Http Client](https://docs.nestjs.com/application/http-client)
+  * ***Justification .-*** I have experience using fetch and axios, now I wanted to experiment with http client from nestJS.
+* [NestJS - Mongo DB](https://docs.nestjs.com/data/mongodb)
+  * ***Justification .-*** For integrating mongo DB I used this documentation.
+* [NestJS - Unions and Enums](https://docs.nestjs.com/graphql/unions-and-enums#code-first-1)
+  * ***Justification .-*** I tried to follow this approach to merge vehicle types with makes but didn't work at all.
+* [NestJS - Bullmq](https://docs.nestjs.com/application/queues#bullmq-installation)
+  * ***Justification .-*** After fixing the hardcoded 440 request I noticed that getting all vehicle types for makes takes its time so I decided to add Bullmq to add a rate limit and execute call to api in paralallel and in  batches.
+* [NestJS - Resolvers](https://docs.nestjs.com/graphql/resolvers#args-decorator-options)
+  * ***Justification .-*** Needed to review and argument type sintax.
+* [MDN - Global Object Errors](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error)
+  * ***Justification .-*** I needed this documentation to make custom Errors that are not inheritted from HttpException.
+* [Pino Logger](https://getpino.io/#/docs/api?id=logger)
+  * ***Justification .-*** I readed this API reference to instantiate and use Pino logger.
+* [NestJS - Logger](https://docs.nestjs.com/application/logger#use-external-logger)
+* [Production Logging in NestJS with Pino](https://medium.com/@rxman/production-logging-in-nestjs-with-pino-f21ee5844bd4)
+* [Pino HTTP](https://github.com/pinojs/pino-http#api)
+  * ***Justification .-*** Pino API documentation was not enough to set up completely, so I used this three(above) docuemtnation.
+* [Fast XML Parser](https://github.com/NaturalIntelligence/fast-xml-parser)
+  * ***Justification*** Library used for parsing XML to JS objects.
+* [Zod API](https://zod.dev/api)
+  * ***Justification .-*** It is no a bad idea keeping handy Zod API.
+* [Mermaid.js](https://mermaid.js.org/intro/)
+  * ***Justification .-*** It is my first time using mermaid for documentation diagrams, so I am following its syntax page.
+* [Bug - Query root type must be provided](https://stackoverflow.com/questions/64105940/graphqlerror-query-root-type-must-be-provided)
+  * ***Justification .-*** I got this error because I created the ingester first without having at least one @Query() function.
+* [Bug - ES6 Modules not parsed byin Jest](https://jestjs.io/docs/30.0/ecmascript-modules)
+* [Bug - Manual Mock Approachj for mocking ES6 node modules](https://jestjs.io/docs/manual-mocks)
+* [Bug - Needed to restart TS server](https://stackoverflow.com/questions/54139158/cannot-find-name-describe-do-you-need-to-install-type-definitions-for-a-test)
+  * ***Justification .-*** I read all the docuemntation above finding the best approach to handle ES6 node_modules mocking but nothing worked for me so I migrated testing to vitest.
+* [NestJS - Testing](https://docs.nestjs.com/fundamentals/testing#installation) 
+  * ***Justification .-*** I followed this docuemntation to migrate from jest to vitest.
+* [Docs Docker - Dokcerfile](https://docs.docker.com/reference/dockerfile/)
+  * ***Justification .-*** Needed to remember Dockerfile Syntax.

@@ -1,0 +1,19 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type VehicleTypeModel {
+  typeId: String!
+  typeName: String!
+}
+
+type MakeModel {
+  makeId: String!
+  makeName: String!
+  vehicleTypes: [VehicleTypeModel!]!
+}
+
+type Query {
+  makes(page: Int = 1, limit: Int = 50, all: Boolean = false, makeName: String, makeId: String): [MakeModel!]!
+  makesCount(makeName: String, makeId: String): Int!
+}
