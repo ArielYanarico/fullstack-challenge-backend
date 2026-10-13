@@ -1,19 +1,167 @@
 # fullstack-challenge-backend
+
 This is the backend for fullstack techincal challenge
 
 ## Set up
 
+Before running this project, make sure you have installed:
 
+* Node.js 24.x or higher
+* pnpm 11.x or higher (I tested with npm in windows and worked)
+* Docker Desktop (If you have Docker Engine make sure docker compose is installed as well)
+
+Install dependencies:
+```bash
+pnpm install
+```
+
+Use `.env.example` to create a `.env` file with your custom values, however take in account that docker uses `.env.example` for creating and running backend container:
+```bash
+cp .env.example .env
+```
+
+## Run locally
+
+One command run (builds and runs MongoDB, Redis and Backend in containers):
+```bash
+pnpm docker:up
+```
+
+For checking container logs or stop the containers:
+```bash
+pnpm docker:logs
+pnpm docker:down
+```
+
+Running docker for mongo and redis but running backend in console:
+```bash
+pnpm docker:infra
+pnpm start:dev
+```
+
+Running only MongoDB or only Redis in docker (in case you have the other installed locally):
+```bash
+pnpm docker:db
+pnpm docker:redis
+```
+
+Running unit tests:
+```bash
+pnpm test
+```
 
 ## Environment variables
 
 * **NODE_ENV** - *enum* - ['development', 'production', 'test'] Define the app environment. (default 'development')
 * **PORT** - *int* - Port number exposed where backend runs. (default 3000)
 * **PROVIDER_VEHICLES_URL** - *string* - URL consumed by Vehicles ingester to get "makes" and "vehicle types".(required)
-* **LOGGING_LEVEL** - *string* - Minimum logging level used by pino-http. (default 'info')
+* **LOGGING_LEVEL** - *enum* - ['info', 'warn', 'error', 'debug'] Minimum logging level used by pino-http. (default 'info')
 * **DB_CONNECTION_URI** - *string* - Mongo connection uri. (default 'mongodb://localhost:27017/challenge-db')
-* **REDIS_HOST** - *string* - Redis host for caching data. (default 'localhost')
+* **REDIS_HOST** - *string* - Redis host for caching data and BullMQ queues. (default 'localhost')
 * **REDIS_PORT** - *int* - The port where redis is exposed. (default 6379)
+* **INGESTION_CONCURRENCY** - *int* - Number of concurrent jobs processed by BullMQ worker when fetching vehicle types. (default 10)
+* **INGESTION_RATE_LIMIT_MAX** - *int* - Maximum number of requests allowed per duration window in BullMQ worker. (default 20)
+* **INGESTION_RATE_LIMIT_DURATION_MS** - *int* - Duration window in milliseconds for BullMQ rate limiter. (default 1000)
+* **INGESTION_MAX_ATTEMPTS** - *int* - Maximum number of retry attempts when a queue job fails. (default 3)
+
+## Build Instructions
+
+Compiling TypeScript source files into `dist/` folder:
+```bash
+pnpm build
+```
+
+Running the compiled production build locally (make sure MongoDB and Redis are running):
+```bash
+pnpm start:prod
+```
+
+Building the Docker image using docker compose (uses multi-stage `docker/Dockerfile`):
+```bash
+docker compose -f docker/docker-compose.yml build
+```
+
+## Data model
+
+Vehicle types are embedded directly inside the `Make` document in MongoDB to avoid joins and keep GraphQL queries fast.
+
+* **makeId** - *string* - Unique identifier from the provider API. (required, unique index)
+* **makeName** - *string* - Name of the vehicle make. (required, indexed)
+* **vehicleTypes** - *VehicleType[]* - Embedded list of vehicle types for this make. (default `[]`)
+  * **typeId** - *string* - Identifier of the vehicle type. (required)
+  * **typeName** - *string* - Name of the vehicle type. (required)
+* **runId** - *string* - Ingestion run identifier used to clean up stale makes after sync finishes. (indexed)
+
+## GraphQL schema
+
+The schema is auto-generated in `src/schema.gql` (code-first approach) and exposed at `POST /graphql`:
+
+```graphql
+type VehicleTypeModel {
+  typeId: String!
+  typeName: String!
+}
+
+type MakeModel {
+  makeId: String!
+  makeName: String!
+  vehicleTypes: [VehicleTypeModel!]!
+}
+
+type Query {
+  makes(page: Int = 1, limit: Int = 50, all: Boolean = false, makeName: String, makeId: String): [MakeModel!]!
+  makesCount(makeName: String, makeId: String): Int!
+}
+```
+
+Query arguments:
+
+* **page** - *int* - Page number for pagination. (default 1)
+* **limit** - *int* - Number of items per page, max 100. (default 50)
+* **all** - *boolean* - If `true`, bypasses pagination and returns all matching makes. (default `false`)
+* **makeName** - *string* - Case-insensitive partial match filter by make name. (optional)
+* **makeId** - *string* - Exact match filter by make ID. (optional)
+
+Example query and response:
+```graphql
+query {
+  makes(makeId: "440") {
+    makeId
+    makeName
+    vehicleTypes {
+      typeId
+      typeName
+    }
+  }
+}
+```
+```json
+{
+  "data": {
+    "makes": [
+      {
+        "makeId": "440",
+        "makeName": "ASTON MARTIN",
+        "vehicleTypes": [
+          {
+            "typeId": "2",
+            "typeName": "Passenger Car"
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+## API Documentation
+
+Detailed explanations of the internal architecture and strategies can be found in the `documentation/` folder:
+
+* [Internal Ingestion Pipeline](./documentation/ingestion-pipeline.md) - How vehicle makes and types are fetched, parsed, queued with BullMQ and stored in MongoDB.
+* [Error Handling Strategy](./documentation/error-handling.md) - Custom exceptions, XML parser fallbacks, queue fault isolation and retry rules.
+* [Logging Strategy](./documentation/logging-strategy.md) - Pino logger setup, log levels, HTTP serializers and daily file rotation.
+* [Configuration Approach](./documentation/configuration-approach.md) - Environment variables validation with Zod and async module configuration.
 
 ## Branching model justification
 
@@ -59,13 +207,15 @@ gitGraph
   * [*] Index db document field to make access faster
   * [*] Add mandatory pagination since we dont want to get all vehicles by default in a single call
 * [*] Update docker compose to run development environment locally in a simple way
-* [ ] Update docuemtation 
+* [*] Update docuemtation 
 
 ### Nice to have tasks:
 * [*] ~~Add a retry capability to cron jobs when the fail NOT NEEDED ANYMORE.~~
 * [*] ~~Update vehicle parser service to unify functions and avoid having repeated code NOT NEEDED ANYMORE~~.
 * [*] Add a flag to get all makes even if it takes its time.
 * [ ] Add/update Exception filters (if needed)
+* [ ] Improve unit testing for mocking xml endpoint
+* [ ] Add CI pipeline yml file
 
 ## Bibliography (references)
 
