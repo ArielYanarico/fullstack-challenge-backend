@@ -186,33 +186,33 @@ gitGraph
 
 ## Tasks (TODO):
 
-* [*] Initialize the project using NestJS
-* [*] Set-up the config module (add ZOD for validation)
-* [*] Add and set-up nestJs scheduling to get vehicles every period of time
-* [*] Set up the logging module
-* [*] Design and make the first version the ingester
-  * [*] Fetch vehicle type
-  * [*] Fetch all makes
-* [*] Start with the approach for error handling
-* [*] Design and make the models for Mongo DB
-* [*] FIX-hardcoded vehicle type (I realized that the endpoint for vehicle type accepts /:makeId so need to fix it and make it performant)
-  * [*] Add redis for caching
-  * [*] Update Schema to embed vehicle types in make
-  * [*] Use redis to cache data
-  * [*] Remove hardcoded 440 and use a Queue manager to handle vehicle types with limit rate
-* [*] Setup Unit test library
-* [*] Add tests for Ingester
-* [ ] Add tests for Make module
-* [*] Work on the service and resolver file
-  * [*] Index db document field to make access faster
-  * [*] Add mandatory pagination since we dont want to get all vehicles by default in a single call
-* [*] Update docker compose to run development environment locally in a simple way
-* [*] Update docuemtation 
+* [x] Initialize the project using NestJS
+* [x] Set-up the config module (add ZOD for validation)
+* [x] Add and set-up nestJs scheduling to get vehicles every period of time
+* [x] Set up the logging module
+* [x] Design and make the first version the ingester
+  * [x] Fetch vehicle type
+  * [x] Fetch all makes
+* [x] Start with the approach for error handling
+* [x] Design and make the models for Mongo DB
+* [x] FIX-hardcoded vehicle type (I realized that the endpoint for vehicle type accepts /:makeId so need to fix it and make it performant)
+  * [x] Add redis for caching
+  * [x] Update Schema to embed vehicle types in make
+  * [x] Use redis to cache data
+  * [x] Remove hardcoded 440 and use a Queue manager to handle vehicle types with limit rate
+* [x] Setup Unit test library
+* [x] Add tests for Ingester
+* [x] Add tests for Make module
+* [x] Work on the service and resolver file
+  * [x] Index db document field to make access faster
+  * [x] Add mandatory pagination since we dont want to get all vehicles by default in a single call
+* [x] Update docker compose to run development environment locally in a simple way
+* [x] Update docuemtation 
 
 ### Nice to have tasks:
-* [*] ~~Add a retry capability to cron jobs when the fail NOT NEEDED ANYMORE.~~
-* [*] ~~Update vehicle parser service to unify functions and avoid having repeated code NOT NEEDED ANYMORE~~.
-* [*] Add a flag to get all makes even if it takes its time.
+* [x] ~~Add a retry capability to cron jobs when the fail NOT NEEDED ANYMORE.~~
+* [x] ~~Update vehicle parser service to unify functions and avoid having repeated code NOT NEEDED ANYMORE~~.
+* [x] Add a flag to get all makes even if it takes its time.
 * [ ] Add/update Exception filters (if needed)
 * [ ] Improve unit testing for mocking xml endpoint
 * [ ] Add CI pipeline yml file
